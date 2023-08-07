@@ -1,0 +1,163 @@
+<template>
+  <div class="products-category">
+    <h1 class="text-center mt-10">{{ $route.params.title }}</h1>
+    <v-container>
+      <v-card :loading="loading" elevation="0" class="pt-5" min-height="700px">
+        <v-row v-if="loading">
+          <v-col cols="3" v-for="num in 4" :key="num">
+            <v-skeleton-loader type="image,article,button"> </v-skeleton-loader>
+          </v-col>
+        </v-row>
+        <v-row v-if="!loading">
+          <v-col
+            cols="3"
+            v-for="item in categoryProducts.products"
+            :key="item.id"
+            class="px-5"
+          >
+            <v-lazy>
+              <v-card elevation="0">
+                <v-hover v-slot="{ isHovering, props }">
+                  <div
+                    class="img-parent"
+                    style="height: 160px; overflow: hidden"
+                  >
+                    <img
+                      :src="
+                        showenItem[item.title]
+                          ? showenItem[item.title]
+                          : item.thumbnail
+                      "
+                      :alt="item.brand"
+                      class="w-100"
+                      :style="`height: 100%;transition: all 0.3s ease-in-out;cursor:pointer;scale:${
+                        isHovering ? 1.05 : 1
+                      }`"
+                      v-bind="props"
+                    />
+                  </div>
+                </v-hover>
+
+                <v-card-text class="pl-0 pb-1">
+                  {{
+                    `(${item.title})${item.description}`.length <= 40
+                      ? `(${item.title})${item.description}`
+                      : `(${item.title})${item.description}`.substring(0, 40) +
+                        "..."
+                  }}
+                  <!-- ({{ item.title }})
+                    {{
+                      item.description + " " + item.title.split(" ").length <= 4
+                        ? item.description
+                        : item.description
+                            .split(" ")
+                            .slice(0, 4 - item.title.split(" ").length)
+                            .join(" ")
+                    }} -->
+                </v-card-text>
+                <v-rating
+                  v-model="item.rating"
+                  half-increments
+                  readonly
+                  color="yellow-darken-2"
+                  size="x-small"
+                  density="compact"
+                ></v-rating>
+                <v-card-text class="pl-0 pt-0">
+                  <del>${{ item.price }}</del>
+
+                  from
+                  <span
+                    class="text-red"
+                    style="font-weight: 900; font-size: 16px"
+                  >
+                    ${{
+                      Math.ceil(
+                        item.price -
+                          item.price * (item.discountPercentage / 100)
+                      )
+                    }}
+                  </span>
+                </v-card-text>
+                <v-btn-toggle v-model="showenItem[item.title]">
+                  <v-btn
+                    v-for="(pic, i) in item.images"
+                    :value="pic"
+                    :key="i"
+                    size="x-small"
+                    rounded="xl"
+                    :ripple="false"
+                  >
+                    <img
+                      :src="pic"
+                      width="30"
+                      height="30"
+                      style="
+                        border: 1px solid rgba(110, 110, 110, 0.377);
+                        border-radius: 50%;
+                      "
+                      alt="img"
+                  /></v-btn>
+                </v-btn-toggle>
+                <div class="mt-5">
+                  <v-btn
+                    style="text-transform: none; border-radius: 30px"
+                    width="220"
+                    height="40"
+                    variant="outlined"
+                    class="py-3 px-12"
+                    @click="
+                      $router.push({
+                        name: 'products_details',
+                        params: { productId: item.id },
+                      })
+                    "
+                    >Choose Options</v-btn
+                  >
+                </div>
+              </v-card>
+            </v-lazy>
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-container>
+  </div>
+</template>
+
+<script>
+import { productModules } from "@/stores/products";
+import { mapActions, mapState } from "pinia";
+import { VSkeletonLoader } from "vuetify/lib/labs/components.mjs";
+
+export default {
+  components: { VSkeletonLoader },
+  data() {
+    return {
+      showenItem: {},
+      loading: false,
+    };
+  },
+  methods: {
+    ...mapActions(productModules, ["getProductsByCategory"]),
+  },
+  computed: {
+    ...mapState(productModules, ["categoryProducts"]),
+  },
+  watch: {
+    async $route() {
+      document.documentElement.scrollTo(0, 0);
+      this.loading = true;
+
+      await this.getProductsByCategory(this.$route.params.category);
+      this.loading = false;
+    },
+  },
+  async mounted() {
+    this.loading = true;
+    await this.getProductsByCategory(this.$route.params.category);
+    this.loading = false;
+  },
+};
+</script>
+
+<style lang="scss" scoped></style>
