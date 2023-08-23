@@ -1,12 +1,15 @@
 <template>
   <AppLayout>
     <router-view :key="$route.fullPath" />
+    <QuickView />
   </AppLayout>
 </template>
 <script>
+// import QuickView from "@/components/home_page/QuickView.vue";
 import AppLayout from "./components/layout/AppLayout.vue";
+import QuickView from "./components/home_page/QuickView.vue";
 export default {
-  components: { AppLayout },
+  components: { AppLayout, QuickView },
 };
 </script>
 <style lang="scss">

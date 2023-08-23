@@ -19,7 +19,7 @@
               <v-card elevation="0">
                 <v-hover v-slot="{ isHovering, props }">
                   <div
-                    class="img-parent"
+                    class="img-parent posistion-relative"
                     style="height: 160px; overflow: hidden"
                   >
                     <img
@@ -35,6 +35,26 @@
                       }`"
                       v-bind="props"
                     />
+                    <v-btn
+                      density="compact"
+                      width="80"
+                      height="30"
+                      variant="outlined"
+                      class="bg-white quick-view-btn"
+                      style="
+                        text-transform: none;
+                        position: absolute;
+                        left: 50%;
+                        top: 50%;
+                        transform: translate(-50%, -50%);
+                        font-size: 12px;
+                        transition: 0.2 all ease-in-out;
+                        opacity: 0;
+                      "
+                      @click="openQuickView(item)"
+                    >
+                      Quic View
+                    </v-btn>
                   </div>
                 </v-hover>
 
@@ -130,6 +150,7 @@ import { mapActions, mapState } from "pinia";
 import { VSkeletonLoader } from "vuetify/lib/labs/components.mjs";
 
 export default {
+  inject: ["Emitter"],
   components: { VSkeletonLoader },
   data() {
     return {
@@ -139,6 +160,9 @@ export default {
   },
   methods: {
     ...mapActions(productModules, ["getProductsByCategory"]),
+    openQuickView(product) {
+      this.Emitter.emit("openQuickView", product);
+    },
   },
   computed: {
     ...mapState(productModules, ["categoryProducts"]),
@@ -160,4 +184,12 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.products-category {
+  .img-parent:hover {
+    .quick-view-btn {
+      opacity: 1 !important;
+    }
+  }
+}
+</style>

@@ -33,7 +33,10 @@
       <swiper-slide v-for="item in products" :key="item.id">
         <v-card elevation="0">
           <v-hover v-slot="{ isHovering, props }">
-            <div class="img-parent" style="height: 200px; overflow: hidden">
+            <div
+              class="img-parent position-relative"
+              style="height: 200px; overflow: hidden"
+            >
               <img
                 :src="
                   showenItem[item.title]
@@ -47,6 +50,26 @@
                 }`"
                 v-bind="props"
               />
+              <v-btn
+                density="compact"
+                width="60"
+                height="30"
+                variant="outlined"
+                class="bg-white quick-view-btn"
+                style="
+                  text-transform: none;
+                  position: absolute;
+                  left: 50%;
+                  top: 50%;
+                  transform: translate(-50%, -50%);
+                  font-size: 12px;
+                  transition: 0.2 all ease-in-out;
+                  opacity: 0;
+                "
+                @click="openQuickView(item)"
+              >
+                Quic View
+              </v-btn>
             </div>
           </v-hover>
 
@@ -137,6 +160,12 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import { VSkeletonLoader } from "vuetify/lib/labs/components.mjs";
 
 export default {
+  inject: ["Emitter"],
+  methods: {
+    openQuickView(product) {
+      this.Emitter.emit("openQuickView", product);
+    },
+  },
   props: {
     products: {
       type: Array,
@@ -189,6 +218,11 @@ export default {
   .swiper-pagination-bullet {
     width: 10px;
     height: 10px;
+  }
+  .img-parent:hover {
+    .quick-view-btn {
+      opacity: 1 !important;
+    }
   }
 }
 </style>
