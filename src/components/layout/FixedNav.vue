@@ -53,7 +53,7 @@
             >
               <v-badge
                 location="right top"
-                content="2"
+                :content="cartItems.length"
                 color="red"
                 offset-x="-14"
               ></v-badge>
@@ -85,10 +85,12 @@
 
 <script>
 import { productModules } from "@/stores/products";
+import { createStore } from "@/stores/cart.js";
 import { mapState } from "pinia";
 export default {
   computed: {
     ...mapState(productModules, ["categories"]),
+    ...mapState(createStore, ["cartItems"]),
   },
   inject: ["Emitter"],
   methods: {

@@ -19,7 +19,7 @@
               <v-card elevation="0">
                 <v-hover v-slot="{ isHovering, props }">
                   <div
-                    class="img-parent posistion-relative"
+                    class="img-parent position-relative"
                     style="height: 160px; overflow: hidden"
                   >
                     <img

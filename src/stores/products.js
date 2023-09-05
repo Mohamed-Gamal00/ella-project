@@ -32,9 +32,9 @@ export const productModules = defineStore("productsModule", {
           this.fragrances = res.data.products.filter(
             (el) => el.category === "fragrances"
           );
-          console.log(this.fragrances);
+          // console.log(this.fragrances);
           this.flashDeals = res.data.products.slice(0, 8);
-          console.log(res.data.products);
+          // console.log(res.data.products);
         })
         .catch((err) => {
           console.log(err);

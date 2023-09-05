@@ -2,14 +2,39 @@
   <AppLayout>
     <router-view :key="$route.fullPath" />
     <QuickView />
+    <v-snackbar
+      v-model="bar"
+      location="left bottom"
+      color="success"
+      max-width="300"
+      timeout="3000"
+    >
+      <template v-slot:actions>
+        <v-icon @click="bar = false">mdi-close</v-icon>
+      </template>
+      {{ itemTitle }} has been added to your cart successfully
+    </v-snackbar>
   </AppLayout>
 </template>
 <script>
 // import QuickView from "@/components/home_page/QuickView.vue";
 import AppLayout from "./components/layout/AppLayout.vue";
-import QuickView from "./components/home_page/QuickView.vue";
+import QuickView from "./components/layout/QuickView.vue";
 export default {
+  inject: ["Emitter"],
   components: { AppLayout, QuickView },
+  data() {
+    return {
+      bar: false,
+      itemTitle: "",
+    };
+  },
+  mounted() {
+    this.Emitter.on("showMsg", (data) => {
+      this.itemTitle = data;
+      this.bar = true;
+    });
+  },
 };
 </script>
 <style lang="scss">

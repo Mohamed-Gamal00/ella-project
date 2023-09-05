@@ -109,7 +109,7 @@
               >
                 <v-badge
                   location="right top"
-                  content="2"
+                  :content="cartItems.length"
                   color="#205dc2"
                   offset-x="-14"
                 ></v-badge>
@@ -156,11 +156,6 @@
                     {{ category.title }}
                   </router-link>
                 </li>
-                <!-- <li>Shop</li>
-                <li>Product</li>
-                <li>New In</li>
-                <li>Must Have</li>
-                <li>Collections</li> -->
               </ul>
             </v-col>
             <v-col cols="2"></v-col>
@@ -225,10 +220,12 @@
 
 <script>
 import { productModules } from "@/stores/products";
+import { createStore } from "@/stores/cart.js";
 import { mapState } from "pinia";
 export default {
   computed: {
     ...mapState(productModules, ["categories"]),
+    ...mapState(createStore, ["cartItems"]),
   },
   inject: ["Emitter"],
   methods: {

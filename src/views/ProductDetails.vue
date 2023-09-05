@@ -139,6 +139,8 @@
                 class="w-75 text-white"
                 density="compact"
                 height="45"
+                @click="addToCart(singleProduct)"
+                :loading="btnLoading"
                 >Add To Cart</v-btn
               >
             </v-card-actions>
@@ -153,12 +155,26 @@
 import { VSkeletonLoader } from "vuetify/lib/labs/components.mjs";
 import { productModules } from "@/stores/products";
 import { mapActions, mapState } from "pinia";
+import { createStore } from "@/stores/cart.js";
+
 export default {
+  inject: ["Emitter"],
   computed: {
     ...mapState(productModules, ["singleProduct"]),
   },
   methods: {
     ...mapActions(productModules, ["getSingleProduct"]),
+    ...mapActions(createStore, ["addItem"]),
+    addToCart(item) {
+      item.quantity = this.quantity;
+      this.btnLoading = true;
+      setTimeout(() => {
+        this.btnLoading = false;
+      }, 1000);
+      this.addItem(item);
+      this.Emitter.emit("openCart");
+      this.Emitter.emit("showMsg", item.title);
+    },
   },
   components: {
     VSkeletonLoader,
@@ -168,6 +184,7 @@ export default {
       loading: false,
       tab: "",
       quantity: 1,
+      btnLoading: false,
     };
   },
   async mounted() {

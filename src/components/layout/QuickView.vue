@@ -30,7 +30,7 @@
                 v-if="loading"
                 type="image,image,image"
               ></v-skeleton-loader>
-              <v-tabs center-active height="200" v-model="tab" class="mt-10">
+              <v-tabs center-active height="130" v-model="tab" class="mt-10">
                 <v-tab
                   v-for="(img, i) in product.images"
                   :key="i"
@@ -160,6 +160,8 @@
                     class="w-75 text-white"
                     density="compact"
                     height="45"
+                    @click="addToCart(product)"
+                    :loading="btnLoading"
                     >Add To Cart</v-btn
                   >
                 </v-card-actions>
@@ -174,10 +176,26 @@
 
 <script>
 import { VSkeletonLoader } from "vuetify/lib/labs/components.mjs";
+import { mapActions } from "pinia";
+import { createStore } from "@/stores/cart.js";
 export default {
   inject: ["Emitter"],
   components: {
     VSkeletonLoader,
+  },
+  methods: {
+    ...mapActions(createStore, ["addItem"]),
+    addToCart(item) {
+      item.quantity = this.quantity;
+      this.btnLoading = true;
+      setTimeout(() => {
+        this.btnLoading = false;
+      }, 1000);
+      this.addItem(item);
+      this.Emitter.emit("openCart");
+      this.Emitter.emit("showMsg", item.title);
+      this.dialog = false;
+    },
   },
   data() {
     return {
@@ -186,6 +204,7 @@ export default {
       quantity: 1,
       dialog: false,
       product: "",
+      btnLoading: false,
     };
   },
   mounted() {
